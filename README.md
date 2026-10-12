@@ -4,7 +4,7 @@ A secure MCP bridge between two AI assistants that can't talk to each other dire
 
 ## The problem
 
-I use a live voice agent day-to-day — great for talking through ideas hands-free, but it has real coding limitations. My other agent is the all-arounder: it writes code, runs tools, manages files, handles the heavy lifting. But I can't talk to that one by voice.
+I use a live voice agent day-to-day. Great for talking through ideas hands-free, but it has real coding limitations. My other agent is the all-arounder: it writes code, runs tools, manages files, handles the heavy lifting. But I can't talk to that one by voice.
 
 So while I'm on a call with the voice agent, I had no way to hand real work to the capable one. I was describing code tasks out loud with no path to get them done.
 
@@ -12,10 +12,10 @@ So while I'm on a call with the voice agent, I had no way to hand real work to t
 
 This bridge. The voice agent connects as an MCP client and gets two tools:
 
-- **`delegate_task`** — hand a task to the assistant agent, in the user's own words. It gets queued instantly with a request ID.
-- **`get_reply`** — pull the assistant's reply with that request ID. Poll until it's ready.
+- **`delegate_task`**: hand a task to the assistant agent, in the user's own words. It gets queued instantly with a request ID.
+- **`get_reply`**: pull the assistant's reply with that request ID. Poll until it's ready.
 
-Now I can be mid-conversation — driving, cooking, whatever — say "have the assistant build that script," and the work starts within minutes. The voice agent fetches the result and reads it back to me. Two specialists, one conversation.
+Now I can be mid-conversation (driving, cooking, whatever) and say "have the assistant build that script," and the work starts within minutes. The voice agent fetches the result and reads it back to me. Two specialists, one conversation.
 
 ## How it works
 
@@ -26,9 +26,9 @@ voice agent --MCP/HTTPS--> bridge_server.py --queue.jsonl--> poll.py --> assista
 ```
 
 - **Transport:** Streamable HTTP MCP, stdlib only (no dependencies).
-- **Auth:** Full single-user OAuth 2.1 — dynamic client registration (RFC 7591), PKCE-S256 code flow, approve page gated by a 256-bit bridge secret only the owner knows. The voice agent's platform required OAuth metadata at the standard root paths, so it's all implemented there.
+- **Auth:** Full single-user OAuth 2.1: dynamic client registration (RFC 7591), PKCE-S256 code flow, approve page gated by a 256-bit bridge secret only the owner knows. The voice agent's platform required OAuth metadata at the standard root paths, so it's all implemented there.
 - **Security model:** tools can only append to the queue and read replies. They can't send messages, run commands, or touch anything else. Auth codes are single-use with 10-minute expiry, bound to client + redirect URI + PKCE challenge. Tokens are opaque and stored server-side.
-- **Polling:** a lightweight shell script (`poll.py`) checks the queue every couple minutes and wakes the assistant only when tasks arrive — no heavyweight worker per check.
+- **Polling:** a lightweight shell script (`poll.py`) checks the queue every couple minutes and wakes the assistant only when tasks arrive, no heavyweight worker per check.
 
 ## Run it
 

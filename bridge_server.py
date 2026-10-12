@@ -19,7 +19,7 @@ authorization spec with everything at root:
 Security model (single user):
 - The bridge secret (BRIDGE_SECRET env var or .bridge_secret file, 256-bit)
   is NEVER in a URL. It is asked for once on the approve page (password
-  field) — only the owner knows it, so only they can complete the grant.
+  field). Only the owner knows it, so only they can complete the grant.
   Compared with secrets.compare_digest.
 - Auth codes: single-use, 10-minute expiry, bound to client_id + redirect_uri
   + PKCE challenge (S256). Redirect URIs must exactly match a registered one.
@@ -260,7 +260,7 @@ class Handler(BaseHTTPRequestHandler):
         cl = clients.get(client_id)
         err = None
         if not cl:
-            err = "unknown client — register first"
+            err = "unknown client: register first"
         elif redirect_uri not in cl["redirect_uris"]:
             err = "redirect_uri not registered"
         elif q.get("response_type") != "code":
@@ -283,7 +283,7 @@ h1{{font-size:20px}}p{{color:#aaa;font-size:14px;line-height:1.5}}
 button{{background:#fff;color:#111;border:0;border-radius:999px;padding:14px 40px;font-size:17px;font-weight:700;cursor:pointer;margin-top:8px}}
 .small{{font-size:12px;color:#666;margin-top:16px}}</style></head><body><div class=card>
 <h1>Connect voice agent to assistant?</h1>
-<p>This lets your voice agent hand tasks to your assistant agent —
+<p>This lets your voice agent hand tasks to your assistant agent,
 when you ask it to. The assistant still applies all your usual rules before
 doing anything.</p>
 <form method=post action="/oauth/approve">
@@ -391,7 +391,7 @@ doing anything.</p>
                     "any request to it. "
                     "The assistant picks it up within a few minutes. "
                     "Pass the user's request in the user's own words. "
-                    "The result includes a request ID — use get_reply with "
+                    "The result includes a request ID; use get_reply with "
                     "that ID to fetch the assistant's reply once it answers."),
                 "inputSchema": {
                     "type": "object",
@@ -406,7 +406,7 @@ doing anything.</p>
                     "Fetch the assistant's reply to an earlier delegate_task request. "
                     "Pass the request ID that delegate_task returned. "
                     "Returns the reply text, or 'pending' if it has not "
-                    "answered yet — in that case wait a minute or two and "
+                    "answered yet; in that case wait a minute or two and "
                     "call again."),
                 "inputSchema": {
                     "type": "object",
@@ -422,7 +422,7 @@ doing anything.</p>
                 request_id = str(args.get("request_id") or "")
                 reply = self._get_reply(request_id)
                 text = reply if reply else \
-                    "pending — the assistant hasn't answered yet. Try again in a minute or two."
+                    "pending: the assistant hasn't answered yet. Try again in a minute or two."
                 self._send_json(200, {"jsonrpc": "2.0", "id": rid, "result": {
                     "content": [{"type": "text", "text": text}]}})
                 return
@@ -440,9 +440,9 @@ doing anything.</p>
             self._log(f"queued task {request_id}: {entry['text'][:80]}")
             self._send_json(200, {"jsonrpc": "2.0", "id": rid, "result": {
                 "content": [{"type": "text",
-                             "text": "Task received and queued — the assistant will "
+                             "text": "Task received and queued. The assistant will "
                                      "pick it up within a few minutes.\n"
-                                     "Request ID: " + request_id + " — call get_reply "
+                                     "Request ID: " + request_id + ", call get_reply "
                                      "with this ID to fetch the reply once it answers."}]}})
         else:
             self._send_json(200, {"jsonrpc": "2.0", "id": rid,
@@ -467,6 +467,6 @@ doing anything.</p>
 
 if __name__ == "__main__":
     if not os.path.exists(SECRET_FILE):
-        raise SystemExit("missing bridge secret — set BRIDGE_SECRET or create .bridge_secret first")
+        raise SystemExit("missing bridge secret: set BRIDGE_SECRET or create .bridge_secret first")
     print(f"ai-bridge MCP+OAuth server on {BIND}:{PORT}", flush=True)
     HTTPServer((BIND, PORT), Handler).serve_forever()

@@ -9,8 +9,8 @@ Environment:
   BRIDGE_DIR    Remote directory holding queue.jsonl (default: /opt/ai-bridge)
 
 Prints new tasks as JSON lines, or NO_NEW_TASKS when the queue is empty.
-Designed to run on a tight loop (e.g. every 120s) as a cheap shell script —
-wake your agent/worker only when tasks actually arrive.
+Designed to run on a tight loop (e.g. every 120s) as a cheap shell script,
+waking your agent/worker only when tasks actually arrive.
 """
 import json
 import os
