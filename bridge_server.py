@@ -413,7 +413,7 @@ doing anything.</p>
                     "properties": {
                         "request_id": {
                             "type": "string",
-                            "description": "The request ID returned by message_chi."}},
+                            "description": "The request ID returned by delegate_task."}},
                     "required": ["request_id"]}}]}})
         elif method == "tools/call":
             name = params.get("name")
